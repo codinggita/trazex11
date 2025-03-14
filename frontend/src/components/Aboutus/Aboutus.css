@@ -1,0 +1,47 @@
+.illustration-bull{
+    margin-top: 50px;
+    margin-left: -80px;
+}
+.about-sec1{
+    display: flex;
+    justify-content: space-between;
+
+}
+.sec1-que{
+    color: #fff;
+    font-size: 90px;
+    font-weight: bold;
+    font-family: 'Inter', sans-serif;
+    margin-top: 50px;
+    margin-left: 80px;
+}
+#sec1-que{
+    color: #34c07d ;
+    margin-left: 100px;
+}
+.sec1-ans{
+    color: #c5c5c5;
+    font-family: 'Inter', sans-serif;
+    max-width: 730px;
+    font-size: 25px;
+    text-align: center;
+    margin-top: 100px;
+    margin-left: 20px;
+    line-height: 45px;
+}
+.sec1-ans2{
+    color: #c5c5c5;
+    font-family: 'Inter', sans-serif;
+    max-width: 730px;
+    font-size: 25px;
+    text-align: center;
+    line-height: 45px;
+    margin-left: 30px;
+    /* margin-top: 150px; */
+}
+.about-sec2{
+    display: flex;
+    margin-top: 150px;
+    align-items: center;
+    justify-content: space-around;
+}
