@@ -194,7 +194,7 @@ const MyTeam = ({ contestId }) => {
     const fetchTeam = async () => {
       try {
         const userId = localStorage.getItem("userId"); // Get logged-in userId
-        const response = await axios.get(`http://localhost:3000/api/teams/${userId}/${contestId}`);
+        const response = await axios.get(`https://trazex11-6.onrender.com/api/teams/${userId}/${contestId}`);
         setTeam(response.data);
       } catch (error) {
         console.error("Error fetching team:", error);
@@ -260,7 +260,7 @@ const MyContest = () => {
 
   const fetchJoinedContests = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/contests/user/${userId}`);
+      const response = await axios.get(`https://trazex11-6.onrender.com/api/contests/user/${userId}`);
       setJoinedContests(response.data);
     } catch (error) {
       console.error("Error fetching joined contests:", error);

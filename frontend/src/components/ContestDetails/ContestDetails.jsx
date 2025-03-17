@@ -15,7 +15,7 @@ const ContestDetails = ({ date }) => {
     const encodedDate = encodeURIComponent(date); // Encode the date properly
     console.log("Fetching contests for:", date, "Encoded:", encodedDate);
 
-    fetch(`http://localhost:3000/api/contests/date/${encodedDate}`)
+    fetch(`https://trazex11-6.onrender.com/api/contests/date/${encodedDate}`)
     .then((res) => res.json())
     .then((data) => {
         
