@@ -88,6 +88,8 @@ const dateContestRoutes = require("./routes/dateContestRoutes");
 const contestRoutes = require("./routes/contestRoutes");
 // const newcontestRoutes = require("./routes/newcontestRoutes");
 const DateContest = require("./models/DateContest");
+const stockRoutes = require("./routes/stockRoutes");
+
 
 const app = express();
 app.use(express.json());
@@ -110,6 +112,8 @@ app.use("/api/contests",(req, res, next) => {
     console.log("✅ Request received:", req.method, req.url);
     next();
 }, contestRoutes);
+app.use('/api/stocks', stockRoutes);
+
 
 // 🕞 Auto-update contest status at 3:31 PM
 cron.schedule("31 15 * * *", async () => {
