@@ -33,6 +33,7 @@ const ContestDetails = () => {
 
   const handleGoToCreateTeams = (contestId) => {
     localStorage.setItem("contestId", contestId); // Store contest ID
+    localStorage.setItem("exchange", exchange);
     navigate("/createTeams");
   };
 
