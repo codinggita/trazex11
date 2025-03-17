@@ -9,39 +9,39 @@ import Footer from "../Footer/Footer";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 
-const stockList = [
-  { name: "Reliance Industries", sector: "Oil & Gas", image: "https://cdn.builder.io/api/v1/image/assets/TEMP/6d2941aebaf0bae02cef9451ceafa76f5b4602e86d284d3861ff14690e7a7ec6" },
-  { name: "Tata Motors", sector: "Automobile", image: "https://images.dhan.co/symbol/TATAMOTORS.png" },
-  { name: "HDFC Bank", sector: "Banking", image: "https://images.dhan.co/symbol/HDFCBANK.png" },
-  { name: "Infosys", sector: "IT Services", image: "https://images.dhan.co/symbol/INFY.png" },
-  { name: "Bharti Airtel", sector: "Telecom", image: "https://images.dhan.co/symbol/BHARTIARTL.png" },
-  { name: "Asian Paints", sector: "Paints & Chemicals", image: "https://images.dhan.co/symbol/ASIANPAINT.png" },
-  { name: "Larsen & Toubro", sector: "Construction", image: "https://images.dhan.co/symbol/LT.png" },
-  { name: "Suzlon Energy", sector: "Renewable Energy", image: "https://images.dhan.co/symbol/SUZLON.png" },
-  { name: "IRFC", sector: "Railway", image: "https://images.dhan.co/symbol/IRFC.png" },
-  { name: "Bajaj Finance", sector: "Financial", image: "https://images.dhan.co/symbol/BAJFINANCE.png" },
-  { name: "Mahindra", sector: "Automobile", image: "https://images.dhan.co/symbol/M&M.png" },
-];
 
 const CreateTeamsPage = () => {
   const [selectedStocks, setSelectedStocks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [userId, setUserId] = useState(null);
   const [contestId, setContestId] = useState(null);
+  const [stockList, setstockList] = useState([]);
+
   const navigate = useNavigate();
   const maxStocks = 11;
 
-  // useEffect(() => {
-  //   const storedUserId = localStorage.getItem("userId");
-  //   if (storedUserId) {
-  //     setUserId(storedUserId);
-  //   }
-  // }, []);
 
   useEffect(() => {
     const storedContestId = localStorage.getItem("contestId");
     if (storedContestId) setContestId(storedContestId);
-    console.log(storedContestId)
+    console.log(storedContestId);
+
+    const storedExchange = localStorage.getItem("exchange"); // Get exchange type
+ 
+
+  const fetchStocks = async (exchange) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/stocks/${exchange}`);
+      setstockList(response.data);
+    } catch (error) {
+      console.error("Error fetching stocks:", error);
+    }
+  };
+
+  if (storedExchange) {
+    fetchStocks(storedExchange);  // Fetch stocks based on exchange
+  }
+
   }, []);
 
 
@@ -146,19 +146,30 @@ const CreateTeamsPage = () => {
 const StockCard = ({ stock, handleBuy, handleSell }) => {
   return (
     <article className="flex items-center justify-between bg-zinc-800 p-4 rounded-lg text-white mt-4 w-[1100px] shadow-sm">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <img src={stock.image} alt="Stock Logo" className="w-12 h-12 rounded-full" />
         <div>
           <h3 className="text-lg font-bold">{stock.name}</h3>
           <p className="text-sm text-gray-400">{stock.sector}</p>
         </div>
       </div>
+      
+      <div className="text-center">
+        <p className="text-lg font-semibold">
+          ₹{stock.price} 
+          <span className={`ml-2 px-2 py-1 text-sm font-medium rounded-md ${stock.percentchange < 0 ? "bg-red-700 text-red-300" : "bg-green-700 text-green-300"}`}>
+          {stock.percentchange < 0 ? "▼" : "▲"} {stock.percentchange.toFixed(2)}%
+          </span>
+        </p>
+      </div>
+
       <div className="flex gap-3">
-        <button className="px-4 py-2 bg-green-500 rounded-lg" onClick={() => handleBuy(stock)}>BUY</button>
-        <button className="px-4 py-2 bg-red-500 rounded-lg" onClick={() => handleSell(stock)}>SELL</button>
+        <button className="px-4 py-2 bg-green-500 rounded-lg hover:bg-green-600" onClick={() => handleBuy(stock)}>BUY</button>
+        <button className="px-4 py-2 bg-red-500 rounded-lg hover:bg-red-600" onClick={() => handleSell(stock)}>SELL</button>
       </div>
     </article>
   );
 };
+
 
 export default CreateTeamsPage;
