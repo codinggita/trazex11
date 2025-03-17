@@ -16,7 +16,7 @@ const ContestDetails = () => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/contests/date/${date}/exchange/${exchange}`);
+        const response = await axios.get(`https://trazex11-6.onrender.com/api/contests/date/${date}/exchange/${exchange}`);
         setContests(response.data);
       } catch (err) {
         setError('Error fetching contests');

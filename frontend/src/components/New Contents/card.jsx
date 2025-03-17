@@ -286,7 +286,7 @@ const EventCard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/categorized")
+    fetch("https://trazex11-6.onrender.com/api/categorized")
       .then((res) => res.json())
       .then((data) => {
         if (data?.status === "success") {

@@ -15,7 +15,7 @@ const ProfileCard = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/api/team/user/${userId}`);
+        const response = await fetch(`https://trazex11-6.onrender.com/api/team/user/${userId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch team data");
         }

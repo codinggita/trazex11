@@ -35,7 +35,6 @@ const Loader = () => {
       </motion.div>
     </div>
 
-    <MyTeam />
     </>
   );
 };
