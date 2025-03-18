@@ -592,17 +592,46 @@ exports.getUserContests = async (req, res) => {
 
 exports.getTeamForContest = async (req, res) => {
     try {
-      const { userId, contestId } = req.params;
-      const team = await Team.findOne({ userId, contestId });
-  
-      if (!team) {
-        return res.status(404).json({ message: "Team not found" });
-      }
-  
-      res.json(team);
+        console.log('Params:', req.params); // Log incoming parameters
+        const { userId, contestId } = req.params;
+
+        // Validate inputs
+        if (!userId || !contestId) {
+            return res.status(400).json({ message: "Missing userId or contestId" });
+        }
+
+        const contest = await Contest.findOne({ _id: contestId });
+        console.log('Found contest:', contest); // Log contest details
+        
+        if (!contest) {
+            return res.status(404).json({ message: "Contest not found" });
+        }
+
+        console.log('Joined teams:', contest.joinedTeams); // Log joinedTeams array
+        const teamEntry = contest.joinedTeams.find(
+            (team) => {
+                console.log('Comparing:', team.userId.toString(), 'with', userId);
+                return team.userId.toString() === userId;
+            }
+        );
+        
+        if (!teamEntry) {
+            return res.status(404).json({ message: "Team not found for this user in contest" });
+        }
+
+        console.log('Team entry found:', teamEntry); // Log the matched entry
+        const team = await Team.findById(teamEntry.teamId);
+        console.log('Team details:', team); // Log final team
+        
+        if (!team) {
+            return res.status(404).json({ message: "Team details not found" });
+        }
+
+        res.json(team);
     } catch (error) {
-      console.error("Error fetching team:", error);
-      res.status(500).json({ message: "Internal Server Error", error });
+        console.error("Error fetching team:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
-  };
+};
+
   

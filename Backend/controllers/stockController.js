@@ -4,8 +4,51 @@ const yf = require("yahoo-finance2").default; // Yahoo Finance API
 const NSE_STOCKS = [
   "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ITC.NS", 
   "SBIN.NS", "LT.NS", "M&M.NS", "TECHM.NS", "IRFC.NS", 
-  "TATAMOTORS.NS", "ADANIGREEN.NS"
+  "TATAMOTORS.NS", "ADANIGREEN.NS", "BPCL.NS", "ITDC.NS", "DOMS.NS"
 ];
+
+const calculatePoints = (percentchange, LTP, dayHigh, dayLow, openPrice) => {
+  let buyPoints = 0;
+  let sellPoints = 0;
+
+  // console.log(`Calculating points - Percent Change: ${percentchange}`);
+  let fixedPercent = parseFloat(percentchange.toFixed(2));
+
+  if (percentchange > 0) {
+    buyPoints += Math.floor(fixedPercent * 100); // Convert to number before multiplication
+    sellPoints -= Math.floor(fixedPercent * 50)
+  } else if (percentchange < 0) {
+    buyPoints -= Math.floor(Math.abs(fixedPercent) * 50);
+    sellPoints += Math.floor(Math.abs(fixedPercent) * 100);
+  }
+  
+
+  // ✅ Bonus Points for Specific Percent Changes
+  // ✅ Bonus Points for Stocks that Cross Certain Percent Thresholds
+  const bonusPoints = [
+    { threshold: 2, points: 10 },
+    { threshold: 5, points: 25 },
+    { threshold: 10, points: 50 },
+    { threshold: 15, points: 75 },
+    { threshold: 20, points: 100 },
+    { threshold: 25, points: 125 },
+  ];
+
+  // ✅ Apply bonus points for the highest matching threshold
+  for (let i = bonusPoints.length - 1; i >= 0; i--) {
+    if (Math.abs(percentchange) >= bonusPoints[i].threshold) {
+      if (percentchange > 0) {
+        buyPoints += bonusPoints[i].points;
+      } else {
+        sellPoints += bonusPoints[i].points;
+      }
+      break; // Stop after applying the highest threshold bonus
+    }
+  }
+
+
+  return { buyPoints, sellPoints };
+};
 
 const getAllNSEStocks = async (req, res) => {
   try {
@@ -14,42 +57,41 @@ const getAllNSEStocks = async (req, res) => {
         try {
           const stockData = await yf.quote(symbol);
 
-          const cleanSymbol = stockData.symbol.split(".")[0]; 
+          const cleanSymbol = stockData.symbol.split(".")[0];
 
-          // Create stock object
+          const percentchange = stockData.regularMarketChangePercent;
+          const LTP = stockData.regularMarketPrice;
+          const dayHigh = stockData.regularMarketDayHigh;
+          const dayLow = stockData.regularMarketDayLow;
+          const openPrice = stockData.regularMarketOpen;
+
+          const { buyPoints, sellPoints } = calculatePoints(percentchange, LTP, dayHigh, dayLow, openPrice);
+
           const stockObj = {
             symbol: stockData.symbol,
             name: stockData.shortName,
-            price: stockData.regularMarketPrice,
+            price: LTP,
             change: stockData.regularMarketChange,
-            percentchange: stockData.regularMarketChangePercent,
-            LTP: stockData.regularMarketPrice, // ✅ Fixed duplicate LTP
+            percentchange,
+            LTP,
             volume: stockData.regularMarketVolume,
-            dayHigh: stockData.regularMarketDayHigh,
-            dayLow: stockData.regularMarketDayLow,
+            dayHigh,
+            dayLow,
             previousClose: stockData.regularMarketPreviousClose,
-            openPrice: stockData.regularMarketOpen,
+            openPrice,
             week52Low: stockData.fiftyTwoWeekLow,
             week52High: stockData.fiftyTwoWeekHigh,
-
-            // ✅ Corrected Low & High calculations
-            low7Day: stockData.fiftyTwoWeekLow, // Approximate, since Yahoo doesn't provide exact 7-day data
-            high7Day: stockData.fiftyTwoWeekHigh, // Approximate
-
-            low30Day: stockData.fiftyTwoWeekLow, // Approximate for 30 days
-            high30Day: stockData.fiftyTwoWeekHigh, // Approximate for 30 days
-
-            low180Day: stockData.fiftyTwoWeekLow, // Approximate for 180 days
-            high180Day: stockData.fiftyTwoWeekHigh, // Approximate for 180 days
-
+            buyPoints,
+            sellPoints,
             image: `https://images.dhan.co/symbol/${cleanSymbol}.png`,
+            // dailyGraph,
             lastUpdated: new Date(),
           };
 
-          // Upsert stock data in MongoDB (Update if exists, else create new)
+          // Upsert stock data in MongoDB
           await Stock.findOneAndUpdate(
-            { symbol: stockObj.symbol }, 
-            stockObj, 
+            { symbol: stockObj.symbol },
+            stockObj,
             { upsert: true, new: true }
           );
 
@@ -68,12 +110,10 @@ const getAllNSEStocks = async (req, res) => {
   }
 };
 
-
-
 const BSE_STOCKS = [
   "RELIANCE.BO", "TCS.BO", "INFY.BO", "HDFCBANK.BO", "ITC.BO",
   "SBIN.BO", "LT.BO", "M&M.BO", "TECHM.BO", "IRFC.BO",
-  "TATAMOTORS.BO", "ADANIGREEN.BO"
+  "TATAMOTORS.BO", "ADANIGREEN.BO", "BPCL.BO", "ITDC.BO", "DOMS.BO"
 ];
 
 const getAllBSEStocks = async (req, res) => {
@@ -82,41 +122,42 @@ const getAllBSEStocks = async (req, res) => {
       BSE_STOCKS.map(async (symbol) => {
         try {
           const stockData = await yf.quote(symbol);
-          if (!stockData) {
-            console.warn(`No data for ${symbol}`);
-            return { symbol, error: "No data found" };
-          }
 
-          const cleanSymbol = stockData.symbol.split(".")[0]; 
+          const cleanSymbol = stockData.symbol.split(".")[0];
+
+          const percentchange = stockData.regularMarketChangePercent;
+          const LTP = stockData.regularMarketPrice;
+          const dayHigh = stockData.regularMarketDayHigh;
+          const dayLow = stockData.regularMarketDayLow;
+          const openPrice = stockData.regularMarketOpen;
+
+          const { buyPoints, sellPoints } = calculatePoints(percentchange, LTP, dayHigh, dayLow, openPrice);
 
           const stockObj = {
             symbol: stockData.symbol,
-            name: stockData.shortName || "N/A",
-            price: stockData.regularMarketPrice || 0,
-            change: stockData.regularMarketChangePercent || 0,
-            LTP: stockData.regularMarketPrice || 0,
-            volume: stockData.regularMarketVolume || 0,
-            dayHigh: stockData.regularMarketDayHigh || 0,
-            dayLow: stockData.regularMarketDayLow || 0,
-            previousClose: stockData.regularMarketPreviousClose || 0,
-            openPrice: stockData.regularMarketOpen || 0,
-            week52Low: stockData.fiftyTwoWeekLow || 0,
-            week52High: stockData.fiftyTwoWeekHigh || 0,
-            low7Day: stockData.regularMarketDayLow || 0, // Approximate (Yahoo doesn't provide exact 7-day data)
-            high7Day: stockData.regularMarketDayHigh || 0, // Approximate
-            low30Day: stockData.regularMarketDayLow || 0, // Approximate
-            high30Day: stockData.regularMarketDayHigh || 0, // Approximate
-            low180Day: stockData.regularMarketDayLow || 0, // Approximate
-            high180Day: stockData.regularMarketDayHigh || 0, // Approximate
+            name: stockData.shortName,
+            price: LTP,
+            change: stockData.regularMarketChange,
+            percentchange,
+            LTP,
+            volume: stockData.regularMarketVolume,
+            dayHigh,
+            dayLow,
+            previousClose: stockData.regularMarketPreviousClose,
+            openPrice,
+            week52Low: stockData.fiftyTwoWeekLow,
+            week52High: stockData.fiftyTwoWeekHigh,
+            buyPoints,
+            sellPoints,
             image: `https://images.dhan.co/symbol/${cleanSymbol}.png`,
             lastUpdated: new Date(),
           };
 
-          // Upsert into MongoDB
+          // Upsert stock data in MongoDB
           await Stock.findOneAndUpdate(
-            { symbol: stockObj.symbol }, 
-            stockObj, 
-            { upsert: true, new: true, runValidators: true }
+            { symbol: stockObj.symbol },
+            stockObj,
+            { upsert: true, new: true }
           );
 
           return stockObj;
@@ -134,4 +175,4 @@ const getAllBSEStocks = async (req, res) => {
   }
 };
 
-module.exports = { getAllBSEStocks, getAllNSEStocks };
+module.exports = { getAllNSEStocks, getAllBSEStocks };
