@@ -15,7 +15,7 @@ const StockCard = () => {
     const fetchStocks = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/stocks/${exchange}`); // Replace with your backend URL
+        const response = await fetch(`https://trazex11-4.onrender.com/api/stocks/${exchange}`); // Replace with your backend URL
         if (!response.ok) throw new Error("Failed to fetch stock data");
         const data = await response.json();
         setStocks(data);
