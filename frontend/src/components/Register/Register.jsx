@@ -17,7 +17,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://trazex11-6.onrender.com/users', formData);
+      await axios.post('https://trazex11-4.onrender.com/users', formData);
       alert('Registration successful!');
     } catch (error) {
       alert(error.response.data.error || 'Registration failed');

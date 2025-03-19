@@ -338,6 +338,7 @@
 const cron = require("node-cron");
 const Contest = require("../models/Contest");
 const User = require('../models/User');
+const Team = require('../models/Team');
 
 // Function to create the next day's contest for NSE and BSE
 const autoCreateContest = async () => {
@@ -589,49 +590,65 @@ exports.getUserContests = async (req, res) => {
 };
 
 
-
-exports.getTeamForContest = async (req, res) => {
-    try {
-        console.log('Params:', req.params); // Log incoming parameters
+    // Adjust path to your Team model
+    
+    exports.getTeamForContest = async (req, res) => {
+      try {
         const { userId, contestId } = req.params;
-
+    
         // Validate inputs
         if (!userId || !contestId) {
-            return res.status(400).json({ message: "Missing userId or contestId" });
+          return res.status(400).json({ message: "Missing userId or contestId" });
         }
-
+    
+        if (!mongoose.Types.ObjectId.isValid(contestId)) {
+          return res.status(400).json({ message: "Invalid contestId format" });
+        }
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+          return res.status(400).json({ message: "Invalid userId format" });
+        }
+    
+        // Fetch contest
         const contest = await Contest.findOne({ _id: contestId });
-        console.log('Found contest:', contest); // Log contest details
-        
         if (!contest) {
-            return res.status(404).json({ message: "Contest not found" });
+          return res.status(404).json({ message: "Contest not found" });
         }
-
-        console.log('Joined teams:', contest.joinedTeams); // Log joinedTeams array
-        const teamEntry = contest.joinedTeams.find(
-            (team) => {
-                console.log('Comparing:', team.userId.toString(), 'with', userId);
-                return team.userId.toString() === userId;
-            }
-        );
-        
-        if (!teamEntry) {
-            return res.status(404).json({ message: "Team not found for this user in contest" });
+    
+        // Find all team entries for the user
+        const teamEntries = contest.joinedTeams.filter((team) => {
+          return team.userId.toString() === userId;
+        });
+    
+        if (!teamEntries.length) {
+          return res.status(404).json({ message: "No teams found for this user in contest" });
         }
-
-        console.log('Team entry found:', teamEntry); // Log the matched entry
-        const team = await Team.findById(teamEntry.teamId);
-        console.log('Team details:', team); // Log final team
-        
-        if (!team) {
-            return res.status(404).json({ message: "Team details not found" });
+    
+        // Fetch details for all teams
+        const teamIds = teamEntries.map((entry) => entry.teamId);
+        const teams = await Team.find({ _id: { $in: teamIds } });
+    
+        if (!teams.length) {
+          return res.status(404).json({ message: "Team details not found" });
         }
-
-        res.json(team);
-    } catch (error) {
-        console.error("Error fetching team:", error);
+    
+        // Format response as an array of teams
+        const response = teams.map((team) => ({
+          captain: {
+            name: team.captain.name || "Unknown Captain",
+            image: team.captain.image || "default-image-url",
+          },
+          viceCaptain: {
+            name: team.viceCaptain.name || "Unknown Vice Captain",
+            image: team.viceCaptain.image || "default-image-url",
+          },
+        }));
+    
+        res.json(response);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+        if (error.name === "CastError") {
+          return res.status(400).json({ message: "Invalid ID format in database query" });
+        }
         res.status(500).json({ message: "Internal Server Error", error: error.message });
-    }
-};
-
-  
+      }
+    };

@@ -31,7 +31,7 @@ const CreateTeamsPage = () => {
 
   const fetchStocks = async (exchange) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/stocks/${exchange}`);
+      const response = await axios.get(`https://trazex11-4.onrender.com/api/stocks/${exchange}`);
       setstockList(response.data);
     } catch (error) {
       console.error("Error fetching stocks:", error);
