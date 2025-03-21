@@ -548,7 +548,7 @@ const Leaderboard = ({ joinedTeams }) => {
   const fetchTeamDetails = async (teamId) => {
     setLoadingTeam(true);
     try {
-      const response = await axios.get(`http://localhost:3000/api/team/${teamId}`);
+      const response = await axios.get(`https://trazex11-4.onrender.com/api/team/${teamId}`);
       setTeamDetails(response.data);
       setShowOverlay(true);
     } catch (err) {
