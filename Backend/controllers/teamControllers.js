@@ -71,6 +71,25 @@ exports.createTeam = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+  exports.getTeamById = async (req, res) => {
+    try {
+      const { teamId } = req.params;
+  
+      if (!mongoose.Types.ObjectId.isValid(teamId)) {
+        return res.status(400).json({ error: "Invalid team ID" });
+      }
+  
+      const team = await Team.findById(teamId);
+      if (!team) {
+        return res.status(404).json({ error: "Team not found" });
+      }
+  
+      res.json(team);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
   
 
   exports.getTeamsByUser = async (req, res) => {

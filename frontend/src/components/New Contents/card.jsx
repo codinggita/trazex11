@@ -332,15 +332,18 @@ const EventCard = () => {
         </div>
 
         {/* Display Contests */}
-        <div className="w-full max-w-[1291px] mt-6">
+        <div className="w-full max-w-[1291px] px-4 mt-6 overflow-hidden">
+
           {categorizedContests[selectedCategory].length === 0 ? (
             <p className="text-white text-xl text-center mt-10">No {selectedCategory} contests available.</p>
           ) : (
             categorizedContests[selectedCategory].map((contest) => (
-              <div
-                key={contest._id}
-                className="flex flex-col items-center pt-3 w-[1291px] h-[215px] justify-center rounded-lg bg-stone-900 max-md:max-w-full mb-4"
-              >
+<div
+  key={contest._id}
+  className="flex flex-col items-center pt-3 w-full max-w-[1291px] h-[215px] justify-center rounded-lg bg-stone-900 mb-4 overflow-hidden"
+>
+
+
                 {/* Header */}
                 <header className="flex gap-5 self-start ml-3 text-xl font-semibold whitespace-nowrap text-stone-300">
                   <img
@@ -355,7 +358,7 @@ const EventCard = () => {
                 <hr className="mt-1.5 w-full border border-white border-solid" />
 
                 {/* Main Content */}
-                <div className="flex flex-wrap gap-5 justify-between self-center items-center mt-6 w-full font-bold max-w-[1227px]">
+                <div className="flex flex-wrap gap-5 justify-between px-3  self-center items-center mt-6 w-full font-bold max-w-[1227px]">
                   <div className="flex gap-10 self-start mt-1.5">
                     <time className="text-5xl leading-none text-white">{contest.date || "N/A"}</time>
                     <span className="text-2xl leading-loose text-neutral-400">{contest.day || "N/A"}</span>
@@ -374,8 +377,8 @@ const EventCard = () => {
                 </div>
 
                 {/* Footer */}
-                <footer className="flex overflow-hidden flex-wrap gap-5 justify-between py-1.5 pr-7 pl-5 mt-8 w-[1291px] h-[52px] rounded-lg bg-neutral-800">
-                  <div className="flex items-center gap-2">
+                <footer className="flex flex-wrap gap-5 justify-between py-1.5 px-4 mt-8 w-full max-w-[1291px] h-[52px] rounded-lg bg-neutral-800 overflow-hidden">
+                <div className="flex items-center gap-2">
                     <span className="text-yellow-500 text-2xl">🏆</span>
                     <p className="text-xl font-medium leading-10 text-stone-300">
                       {contest.joinedCount || 0} Joined

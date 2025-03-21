@@ -141,24 +141,220 @@
 
 
 
+
+
+
+
+
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+// import { toast } from "react-toastify";
+
+// const JoinContest = () => {
+//   const [contestId, setContestId] = useState(null);
+//   const [userId, setUserId] = useState(null);
+//   const [teamId, setTeamId] = useState(null);
+//   const [selectedStocks, setSelectedStocks] = useState([]);
+//   const [captain, setCaptain] = useState(null);
+//   const [viceCaptain, setViceCaptain] = useState(null);
+
+//   useEffect(() => {
+//     setContestId(localStorage.getItem("contestId"));
+//     setUserId(localStorage.getItem("userId"));
+//     setSelectedStocks(JSON.parse(localStorage.getItem("selectedStocks")) || []);
+//     setCaptain(JSON.parse(localStorage.getItem("captain")));
+//     setViceCaptain(JSON.parse(localStorage.getItem("viceCaptain")));
+//   }, []);
+
+//   const handleSave = async () => {
+//     if (!contestId || !userId || selectedStocks.length === 0 || !captain || !viceCaptain) {
+//       toast.error("Missing details! Please check console.");
+//       console.error("Missing details:", { contestId, userId, selectedStocks, captain, viceCaptain });
+//       return;
+//     }
+
+//     const payload = {
+//       userId,
+//       contestId, // Include contestId in the payload
+//       stocks: selectedStocks.map(stock => ({
+//         name: stock.name,
+//         action: stock.type,
+//         sector: stock.sector,
+//         image: stock.image,
+//       })),
+//       captain: {
+//         name: captain.name,
+//         action: captain.type,
+//         sector: captain.sector,
+//         image: captain.image,
+//       },
+//       viceCaptain: {
+//         name: viceCaptain.name,
+//         action: viceCaptain.type,
+//         sector: viceCaptain.sector,
+//         image: viceCaptain.image,
+//       },
+//     };
+
+//     try {
+//       console.log("Sending request to create team:", payload);
+//       const response = await axios.post("https://trazex11-4.onrender.com/api/team/create-team", payload);
+//       console.log("API Response:", response.data);
+
+//       // Extract teamId properly from the response
+//       const newTeamId = response.data.team?._id; // Ensure correct key (_id or id)
+//       if (!newTeamId) {
+//         console.error("Error: API did not return a valid teamId:", response.data);
+//         toast.error("Failed to create team. Invalid response from server.");
+//         return;
+//       }
+
+//       // Save teamId
+//       localStorage.setItem("teamId", newTeamId);
+//       setTeamId(newTeamId);
+
+//       toast.success("Team successfully created!");
+
+//       // Join the contest with the created teamId
+//       await joinContest(newTeamId, contestId, userId);
+//     } catch (error) {
+//       console.error("Error creating team:", error.response ? error.response.data : error.message);
+//       toast.error("Failed to create team. Try again.");
+//     }
+//   };
+
+//   // Function to join the contest
+//   const joinContest = async (teamId, contestId, userId) => {
+//     if (!teamId) {
+//       console.error("Error: Missing teamId when joining contest.");
+//       toast.error("Failed to join contest. Invalid team ID.");
+//       return;
+//     }
+
+//     const joinPayload = { teamId, contestId, userId };
+
+//     try {
+//       console.log("Sending request to join contest:", joinPayload);
+//       const response = await axios.post("https://trazex11-4.onrender.com/api/contests/join", joinPayload);
+//       console.log("Joined contest successfully:", response.data);
+//       toast.success("Successfully joined the contest!");
+//     } catch (error) {
+//       console.error("Error joining contest:", error.response ? error.response.data : error.message);
+//       toast.error("Failed to join contest. Try again.");
+//     }
+//   };
+
+//   return (
+//     <div>
+//       {/* <button onClick={handleSave} className="text-white">Join Contest</button> */}
+//       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+//       <div className="w-[495px] h-[285px] bg-[#1A1A1A] rounded-lg shadow-lg p-6 relative text-white">
+//          <button
+//           className="absolute top-4 right-4 text-gray-400 hover:text-white"
+//           onClick={() => setIsOpen(false)}
+//         >
+//           <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739689311/qfish90qpd92qfbqucdo.png" alt="Close" className="w-5 h-5" />
+//         </button>
+//         <h2 className="text-lg font-semibold text-center mb-6">Join Confirmation</h2>
+//         <div className="flex justify-between items-center mb-4">
+//           <span className="text-gray-300">Entry</span>
+//           <span className="flex items-center gap-1 text-lg font-medium">
+//             <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 50
+//           </span>
+//         </div>
+//         <div className="flex justify-between items-center mb-8">
+//           <span className="text-gray-300 flex items-center gap-1">
+//             To Pay <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739690238/ecxbhssscmqlfhvfw2ik.png" alt="Info" className="w-4 h-4 text-gray-400" />
+//           </span>
+//           <span className="flex items-center gap-1 text-lg font-medium">
+//             <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 50
+//           </span>
+//         </div>
+//         <Link to="/mycontest">
+//           <button 
+//             onClick={handleSave}
+//             className="w-full mt-9 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-md"
+//           >
+//             Join Contest
+//           </button>
+//         </Link>
+//       </div>
+//       <ToastContainer />
+//     </div>
+//     </div>
+//   );
+// };
+
+// export default JoinContest;
+
+
+
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
-const JoinContest = () => {
+const JoinContest = ({ setIsOpen }) => {
   const [contestId, setContestId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [selectedStocks, setSelectedStocks] = useState([]);
   const [captain, setCaptain] = useState(null);
   const [viceCaptain, setViceCaptain] = useState(null);
+  const [entryFee, setEntryFee] = useState(0);
+
+  // Function to format the date as "DD MMM"
+  const getFormattedDate = () => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.toLocaleString("en-US", { month: "short" }).toUpperCase(); 
+    return `${day} ${month}`;
+  };
 
   useEffect(() => {
-    setContestId(localStorage.getItem("contestId"));
+    const storedContestId = localStorage.getItem("contestId");
+    setContestId(storedContestId);
     setUserId(localStorage.getItem("userId"));
     setSelectedStocks(JSON.parse(localStorage.getItem("selectedStocks")) || []);
     setCaptain(JSON.parse(localStorage.getItem("captain")));
     setViceCaptain(JSON.parse(localStorage.getItem("viceCaptain")));
+
+    const fetchContestDetails = async () => {
+      try {
+        const date = getFormattedDate();
+        const exchange = localStorage.getItem("exchange") || "NSE";
+        console.log("Fetching contest for:", { date, exchange, storedContestId });
+
+        const response = await axios.get(
+          `https://trazex11-4.onrender.com/api/contests/date/${date}/exchange/${exchange}`
+        );
+
+        console.log("API Response:", response.data);
+
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          // Find the contest matching the stored contestId
+          const matchingContest = response.data.find(contest => contest._id === storedContestId);
+          
+          if (matchingContest) {
+            console.log("Matching contest found:", matchingContest);
+            setEntryFee(matchingContest.entryFee || 0); // Set the correct entryFee
+          } else {
+            console.warn("No contest found matching contestId:", storedContestId);
+            toast.error("Selected contest not found for this date and exchange.");
+            setEntryFee(0); // Fallback
+          }
+        } else {
+          console.warn("No contests found in response:", response.data);
+          toast.error(`No contests found for ${exchange} on ${date}.`);
+        }
+      } catch (error) {
+        console.error("Error fetching contest details:", error.response?.data || error.message);
+        toast.error("Failed to fetch contest details.");
+      }
+    };
+
+    fetchContestDetails();
   }, []);
 
   const handleSave = async () => {
@@ -170,7 +366,7 @@ const JoinContest = () => {
 
     const payload = {
       userId,
-      contestId, // Include contestId in the payload
+      contestId,
       stocks: selectedStocks.map(stock => ({
         name: stock.name,
         action: stock.type,
@@ -194,23 +390,18 @@ const JoinContest = () => {
     try {
       console.log("Sending request to create team:", payload);
       const response = await axios.post("https://trazex11-4.onrender.com/api/team/create-team", payload);
-      console.log("API Response:", response.data);
 
-      // Extract teamId properly from the response
-      const newTeamId = response.data.team?._id; // Ensure correct key (_id or id)
+      const newTeamId = response.data.team?._id;
       if (!newTeamId) {
         console.error("Error: API did not return a valid teamId:", response.data);
-        toast.error("Failed to create team. Invalid response from server.");
+        toast.error("Failed to create team.");
         return;
       }
 
-      // Save teamId
       localStorage.setItem("teamId", newTeamId);
       setTeamId(newTeamId);
-
       toast.success("Team successfully created!");
 
-      // Join the contest with the created teamId
       await joinContest(newTeamId, contestId, userId);
     } catch (error) {
       console.error("Error creating team:", error.response ? error.response.data : error.message);
@@ -218,30 +409,51 @@ const JoinContest = () => {
     }
   };
 
-  // Function to join the contest
   const joinContest = async (teamId, contestId, userId) => {
     if (!teamId) {
-      console.error("Error: Missing teamId when joining contest.");
-      toast.error("Failed to join contest. Invalid team ID.");
+      toast.error("Invalid team ID.");
       return;
     }
 
     const joinPayload = { teamId, contestId, userId };
 
     try {
-      console.log("Sending request to join contest:", joinPayload);
       const response = await axios.post("https://trazex11-4.onrender.com/api/contests/join", joinPayload);
-      console.log("Joined contest successfully:", response.data);
       toast.success("Successfully joined the contest!");
     } catch (error) {
-      console.error("Error joining contest:", error.response ? error.response.data : error.message);
       toast.error("Failed to join contest. Try again.");
     }
   };
 
   return (
-    <div>
-      <button onClick={handleSave}>Join Contest</button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsOpen(false)}>
+      <div className="w-[495px] h-[285px] bg-[#1A1A1A] rounded-lg shadow-lg p-6 relative text-white" onClick={(e) => e.stopPropagation()}>
+        <button className="absolute top-4 right-4 text-gray-400 hover:text-white" onClick={() => setIsOpen(false)}>
+          <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739689311/qfish90qpd92qfbqucdo.png" alt="Close" className="w-5 h-5" />
+        </button>
+        <h2 className="text-lg font-semibold text-center mb-6">Join Confirmation</h2>
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-gray-300">Entry</span>
+          <span className="flex items-center gap-1 text-lg font-medium">
+            <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 
+            {entryFee}
+          </span>
+        </div>
+        <div className="flex justify-between items-center mb-8">
+          <span className="text-gray-300 flex items-center gap-1">
+            To Pay <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739690238/ecxbhssscmqlfhvfw2ik.png" alt="Info" className="w-4 h-4 text-gray-400" />
+          </span>
+          <span className="flex items-center gap-1 text-lg font-medium">
+            <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 
+            {entryFee}
+          </span>
+        </div>
+        <Link to="/mycontest">
+          <button onClick={handleSave} className="w-full mt-9 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-md">
+            Join Contest
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
