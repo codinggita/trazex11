@@ -24,10 +24,51 @@
 
 
 
+// const express = require("express");
+// const {
+//     getAllContests,
+//     getContestsByDateAndExchange, // ✅ New function
+//     createContest,
+//     joinContest,
+//     deleteContest,
+//     getContestParticipants,
+//     getContestsByDate,
+//     getUserContests,
+//     getTeamForContest
+// } = require("../controllers/contestController");
+// const router = express.Router();
+
+// // const authenticateUser = require("../middlewares/authMiddleware"); // If using authentication middleware
+
+
+// // Define routes
+// router.get("/", getAllContests);
+
+// // ✅ Fetch contests by date & exchange
+// router.get("/date/:date/exchange/:exchange", getContestsByDateAndExchange);
+
+// router.post("/create", createContest);
+// router.post("/join", joinContest);
+// router.delete("/delete/:contestId", deleteContest);
+// router.get("/participants/:contestId", getContestParticipants);
+
+// router.get("/user/:userId", getUserContests);
+// router.get("/teams/:userId/:contestId", getTeamForContest);
+
+// router.get("/contests", getContestsByDate);
+
+
+// module.exports = router;
+
+
+
+
+
+
 const express = require("express");
 const {
     getAllContests,
-    getContestsByDateAndExchange, // ✅ New function
+    getContestsByDateAndExchange,
     createContest,
     joinContest,
     deleteContest,
@@ -38,13 +79,10 @@ const {
 } = require("../controllers/contestController");
 const router = express.Router();
 
-// const authenticateUser = require("../middlewares/authMiddleware"); // If using authentication middleware
-
-
 // Define routes
 router.get("/", getAllContests);
 
-// ✅ Fetch contests by date & exchange
+// Fetch contests by date & exchange
 router.get("/date/:date/exchange/:exchange", getContestsByDateAndExchange);
 
 router.post("/create", createContest);
@@ -56,6 +94,5 @@ router.get("/user/:userId", getUserContests);
 router.get("/teams/:userId/:contestId", getTeamForContest);
 
 router.get("/contests", getContestsByDate);
-
 
 module.exports = router;
