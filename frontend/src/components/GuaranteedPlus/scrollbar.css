@@ -1,0 +1,19 @@
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px; /* Ultra-slim for a modern touch */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; /* Completely invisible track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #424242  ; /* Soft, neutral gray */
+    border-radius: 2px; /* Tiny radius for a sleek look */
+    opacity: 0.7; /* Subtle transparency */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af; /* Slightly darker gray on hover */
+    opacity: 1; /* Full visibility on interaction */
+    transition: opacity 0.2s ease; /* Smooth fade effect */
+}
