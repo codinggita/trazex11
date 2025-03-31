@@ -785,7 +785,7 @@ const autoCreateContest = async () => {
         const totalSpots = 50;
         const entryFee = 100;
         const prize = entryFee * totalSpots;
-        const winpercentage = 10;
+        const winpercentage = 50;
 
         for (const exchange of exchanges) {
             const prizeBreakup = calculatePrizeBreakup(totalSpots, prize, winpercentage);
