@@ -292,7 +292,8 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify"; // Import ToastContainer
+import "react-toastify/dist/ReactToastify.css"; // Import CSS for styling
 import { Link } from "react-router-dom";
 
 const JoinContest = ({ setIsOpen }) => {
@@ -308,7 +309,7 @@ const JoinContest = ({ setIsOpen }) => {
   const getFormattedDate = () => {
     const today = new Date();
     const day = today.getDate();
-    const month = today.toLocaleString("en-US", { month: "short" }).toUpperCase(); 
+    const month = today.toLocaleString("en-US", { month: "short" }).toUpperCase();
     return `${day} ${month}`;
   };
 
@@ -330,19 +331,18 @@ const JoinContest = ({ setIsOpen }) => {
           `https://trazex11-4.onrender.com/api/contests/date/${date}/exchange/${exchange}`
         );
 
+        console.log(`Fetching contest for: Date=${date}, Exchange=${exchange}`);
         console.log("API Response:", response.data);
 
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-          // Find the contest matching the stored contestId
-          const matchingContest = response.data.find(contest => contest._id === storedContestId);
-          
+          const matchingContest = response.data.find((contest) => contest._id === storedContestId);
           if (matchingContest) {
             console.log("Matching contest found:", matchingContest);
-            setEntryFee(matchingContest.entryFee || 0); // Set the correct entryFee
+            setEntryFee(matchingContest.entryFee || 0);
           } else {
             console.warn("No contest found matching contestId:", storedContestId);
             toast.error("Selected contest not found for this date and exchange.");
-            setEntryFee(0); // Fallback
+            setEntryFee(0);
           }
         } else {
           console.warn("No contests found in response:", response.data);
@@ -358,6 +358,7 @@ const JoinContest = ({ setIsOpen }) => {
   }, []);
 
   const handleSave = async () => {
+    toast.info("Starting team creation process..."); // Debug toast
     if (!contestId || !userId || selectedStocks.length === 0 || !captain || !viceCaptain) {
       toast.error("Missing details! Please check console.");
       console.error("Missing details:", { contestId, userId, selectedStocks, captain, viceCaptain });
@@ -367,7 +368,7 @@ const JoinContest = ({ setIsOpen }) => {
     const payload = {
       userId,
       contestId,
-      stocks: selectedStocks.map(stock => ({
+      stocks: selectedStocks.map((stock) => ({
         name: stock.name,
         action: stock.type,
         sector: stock.sector,
@@ -403,6 +404,7 @@ const JoinContest = ({ setIsOpen }) => {
       toast.success("Team successfully created!");
 
       await joinContest(newTeamId, contestId, userId);
+      setIsOpen(false); // Close modal only after success
     } catch (error) {
       console.error("Error creating team:", error.response ? error.response.data : error.message);
       toast.error("Failed to create team. Try again.");
@@ -421,35 +423,72 @@ const JoinContest = ({ setIsOpen }) => {
       const response = await axios.post("https://trazex11-4.onrender.com/api/contests/join", joinPayload);
       toast.success("Successfully joined the contest!");
     } catch (error) {
+      console.error("Error joining contest:", error.response ? error.response.data : error.message);
       toast.error("Failed to join contest. Try again.");
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsOpen(false)}>
-      <div className="w-[495px] h-[285px] bg-[#1A1A1A] rounded-lg shadow-lg p-6 relative text-white" onClick={(e) => e.stopPropagation()}>
-        <button className="absolute top-4 right-4 text-gray-400 hover:text-white" onClick={() => setIsOpen(false)}>
-          <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739689311/qfish90qpd92qfbqucdo.png" alt="Close" className="w-5 h-5" />
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      onClick={() => setIsOpen(false)}
+    >
+      <div
+        className="w-[495px] h-[285px] bg-[#1A1A1A] rounded-lg shadow-lg p-6 relative text-white"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Add ToastContainer here */}
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          style={{ zIndex: 9999 }}
+        />
+
+        <button
+          className="absolute top-4 right-4 text-gray-400 hover:text-white"
+          onClick={() => setIsOpen(false)}
+        >
+          <img
+            src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739689311/qfish90qpd92qfbqucdo.png"
+            alt="Close"
+            className="w-5 h-5"
+          />
         </button>
         <h2 className="text-lg font-semibold text-center mb-6">Join Confirmation</h2>
         <div className="flex justify-between items-center mb-4">
           <span className="text-gray-300">Entry</span>
           <span className="flex items-center gap-1 text-lg font-medium">
-            <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 
+            <img
+              src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png"
+              alt="Coin"
+              className="w-[24px] h-[24px]"
+            />
             {entryFee}
           </span>
         </div>
         <div className="flex justify-between items-center mb-8">
           <span className="text-gray-300 flex items-center gap-1">
-            To Pay <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739690238/ecxbhssscmqlfhvfw2ik.png" alt="Info" className="w-4 h-4 text-gray-400" />
+            To Pay{" "}
+            <img
+              src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739690238/ecxbhssscmqlfhvfw2ik.png"
+              alt="Info"
+              className="w-4 h-4 text-gray-400"
+            />
           </span>
           <span className="flex items-center gap-1 text-lg font-medium">
-            <img src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png" alt="Coin" className="w-[24px] h-[24px]" /> 
+            <img
+              src="https://res.cloudinary.com/dbrb9ptmn/image/upload/v1739692460/rxkduwzdyxozzizaanrl.png"
+              alt="Coin"
+              className="w-[24px] h-[24px]"
+            />
             {entryFee}
           </span>
         </div>
         <Link to="/mycontest">
-          <button onClick={handleSave} className="w-full mt-9 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-md">
+          <button
+            onClick={handleSave}
+            className="w-full mt-9 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-md"
+          >
             Join Contest
           </button>
         </Link>
